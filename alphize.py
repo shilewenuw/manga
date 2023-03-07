@@ -1,14 +1,33 @@
+#!/bin/python3
+
 from PIL import Image
 import os  
-folder = "/home/shile/manga/engl/out"
+from argparse import ArgumentParser
+
+parser = ArgumentParser(description='Convert white pixels to transparent pixels')
+parser.add_argument('--dir', '-d',
+                    type=str,
+                    help='directory of the files to be converted',
+                    required=True)
+
+parser.add_argument('--out', '-o',
+                    type=str,
+                    help='directory to store the converted files',
+                    required=True)
+
+args = parser.parse_args()
+
+os.chdir(args.dir)
+
+if not os.path.exists(args.out):
+    os.makedirs(args.out)
 
 def convertImage(imagename):
-    if ".jpg" not in imagename:
+    try:
+        img = Image.open(imagename)
+    except:
         return
-    print("n: " + imagename)
-    img = Image.open(f"{folder}/{imagename}")
-    img = img.convert("RGBA")
-    #img = img.crop((0, 0, 500, 500))
+    img = img.convert('RGBA')
     datas = img.getdata()
   
     newData = []
@@ -21,11 +40,10 @@ def convertImage(imagename):
   
     img.putdata(newData)
 
-    s = imagename.split(".")
-    s = ".".join([s[0], "png"])
-    #print("s " + s)
-    img.save(f"{folder}/alpha/{s}", "PNG")
+    s = imagename.split('.')
+    s = '.'.join([s[0], 'png'])
+    img.save(os.path.join(args.out, imagename), 'PNG')
   
-for f in os.listdir(folder):
+for f in os.listdir(args.dir):
     print(f)
     convertImage(f)

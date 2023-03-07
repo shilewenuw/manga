@@ -16,7 +16,7 @@ i = 1
 
 for file in sorted(os.listdir()):
     ext = file.split('.')[-1]
-    if ext not in ['png', 'jpg', 'webp', 'gif']:
+    if len(ext) < 2 or ext not in ['png', 'jpg', 'webp', 'gif']:
         continue
     os.rename(file, f'pg{i}.{ext}')
     i += 1

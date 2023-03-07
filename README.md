@@ -4,3 +4,7 @@ Scripts:
 * alphize.py - adds transparency to images. Useful for screentones and coloring analog drawings
 * process.py - converts krita documents to png images, then thresholds, crops, and optionally resizes the image. Parameters are set to match the given templates
 * rename.py - some digital scanners name images with a date/timestamp/sequence, so this script renames them to pg1.png, pg2.png, ...
+
+Resource attribution:
+* [source of manuscript used in the templates](http://www.flyingchipmunkcomicspress.com/Comic_Art_Boards.html)
+* [screentones in examples/alphize/](https://www.deviantart.com/snarkdoodle/art/Krita-dot-screentones-for-brush-pattern-585678496)

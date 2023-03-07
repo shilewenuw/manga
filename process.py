@@ -109,7 +109,7 @@ def process(imagename: str, htrim, vtrim, out="out", halve=False):
         os.makedirs(out)
     img.save(os.path.join(out, imagename))
 
-for f in os.listdir(args.dir):
+for f in os.listdir():
     # .kra~ are backup files
     if '.kra' not in f or '.kra~' in f:
         continue

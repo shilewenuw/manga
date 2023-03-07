@@ -13,7 +13,7 @@ parser.add_argument('--dir', '-d',
 parser.add_argument('--out', '-o',
                     type=str,
                     help='directory to store the converted files',
-                    required=True)
+                    default='out')
 
 args = parser.parse_args()
 

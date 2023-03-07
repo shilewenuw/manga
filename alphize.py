@@ -5,10 +5,9 @@ import os
 from argparse import ArgumentParser
 
 parser = ArgumentParser(description='Convert white pixels to transparent pixels')
-parser.add_argument('--dir', '-d',
+parser.add_argument('dir',
                     type=str,
-                    help='directory of the files to be converted',
-                    required=True)
+                    help='directory of the files to be converted')
 
 parser.add_argument('--out', '-o',
                     type=str,
@@ -44,6 +43,5 @@ def convertImage(imagename):
     s = '.'.join([s[0], 'png'])
     img.save(os.path.join(args.out, imagename), 'PNG')
   
-for f in os.listdir(args.dir):
-    print(f)
+for f in os.listdir():
     convertImage(f)

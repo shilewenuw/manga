@@ -35,13 +35,6 @@ parser.add_argument('--out', '-o',
 
 args = parser.parse_args()
 
-width = 5161
-height = 7309
-left = 910//2
-right = width + left
-top = 1290//2
-bottom = height + top
-
 os.chdir(args.dir)
 
 def thresh(img: Image, threshold = 5) -> Image:

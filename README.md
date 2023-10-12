@@ -1,16 +1,32 @@
-A collection of python scripts useful for manga making. `process.py` assumes you have Krita installed.
+# Automated manga making workflow (Krita)
+Automate parts of your manga making workflow
 
-Scripts:
+Krita manga templates are provided in krita_manga
+
+Usage:
+1. Draw pages, labeled pg1.kra, pg2.kra, etc. and put in PROJECT/ (or make your own folder in the repo - just make sure you copy the Makefile)
+2. `cd PROJECT && make`
+3. Rerun above command if changes to pages are made 
+4. Upload resulting pngs located in PROJECT/out/
+
+Features:
+1. Filters out guidelines and pencils
+2. Crops images to trim lines
+3. Pads page numbers to 3 digits to maintain lexical ordering when uploading images to sites like Imgur
+
+Notes:
+* as of now, tested on Ubuntu Linux
+* you should have Krita installed
+
+misc_scripts/:
 * alphize.py - adds transparency to images. Useful for screentones and coloring analog drawings
-* process.py - converts krita documents to png images, then thresholds, crops, and optionally resizes the image. Parameters are set to match the given templates
 * rename.py - some digital scanners name images with a date/timestamp/sequence, so this script renames them to pg1.png, pg2.png, ...
-* draw.sh - a script to set my Krita shortcuts on Ubuntu
+* krita_shortcuts.sh - a script to set my Krita shortcuts (Ubuntu + Huion Kamvas 20)
 
 Usage examples:
 ```bash
-./alphize.py examples/alphize/
-./process.py examples/process/ 455 645
-./rename.py examples/rename/
+./misc_scripts/alphize.py examples/alphize/
+./misc_scripts/rename.py examples/rename/
 ```
 
 Resource attribution:

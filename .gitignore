@@ -1,8 +1,4 @@
-misc/
-references/
-romcom/
-uw2/
-uw3/
-webtoon/
-zipped/
 __pycache__/
+.vscode/
+out/
+pg*.png

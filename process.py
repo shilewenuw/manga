@@ -1,110 +1,67 @@
-#!/bin/python3
+#!/usr/bin/python3
 
 from PIL import Image
-import os  
-from argparse import ArgumentParser
+import os
 
-parser = ArgumentParser(description='converts krita documents to png images, then thresholds, trims, and optionally resizes the image')
-parser.add_argument('dir',
-                    type=str,
-                    help='directory of the files to be converted')
+import sys
 
-parser.add_argument('htrim',
-                    metavar='H',
-                    type=int,
-                    help='size of horizontal trim in pixels')
+folder = sys.argv[1]
 
-parser.add_argument('vtrim',
-                    metavar='V',
-                    type=int,
-                    help='size of vertical trim in pixels')
+args = sys.argv[2:]
+if len(args) == 1 and '-' in args[0]:
+    args = range(int(args[0].split('-')[0]), int(args[0].split('-')[1]) + 1)
+else:
+    args = [int(arg) for arg in args]
 
-parser.add_argument('--thresh', '-t',
-                    type=int,
-                    help='threshold value',
-                    default=5)
+width = 5161
+height = 7309
 
-parser.add_argument('--halve',
-                    help='halves the length and width',
-                    action='store_true')
+uncrop_width = 6071
+uncrop_height = 8599
 
-parser.add_argument('--out', '-o',
-                    type=str,
-                    help='directory to store the converted files',
-                    default='out')
-
-args = parser.parse_args()
-
-os.chdir(args.dir)
-
-def thresh(img: Image, threshold = 5) -> Image:
-    """apply binary threshold and return the new image. 
-    useful for removing guidelines, pencils, etc.
-
-    Args:
-        img (Image): image to be thresholded
-        threshold (int, optional): the threshold value. Defaults to 5.
-
-    Returns:
-        Image: thresholded image
-    """
+def thresh(img, threshold = 5):
     return img.point(lambda p: 255 * (p > threshold))
 
-def kra2png(filename: str) -> str:
-    """creates a png file from a krita document.
+def remove_alpha(img):
+    background = Image.new('RGBA', img.size, (255,255,255))
+    img = Image.alpha_composite(background, img)
 
-    Args:
-        filename (str): krita document (a .kra file)
-
-    Returns:
-        str: new png filename
-    """
-    imagename = filename.split('.')[0] + '.png'
+def kra2png(filename):
+    imagename = filename.split('.')[0][:2] + filename.split('.')[0][2:].zfill(3) + ".png"
     
     print(imagename)
     
     os.system(f'krita {filename} --export --export-filename {imagename}')
     return imagename
 
-def process(imagename: str, htrim, vtrim, out="out", halve=False):
-    """thresholds, crops, and (optionally) halves the length and width of the given image. 
-    Saves image to the specified out folder.
-
-    Args:
-        imagename (str): filename of the image
-        vtrim (int): vertical trim
-        htrim (int): horizontal trim
-        out (str, optional): directory of where the resulting image is saved. Defaults to 'out'.
-        halve (bool, optional): if set, halves the length and width of the image. Defaults to False.
-    """
+def process(imagename):
     
-    img = Image.open(f'{imagename}').convert('L')
+    img = Image.open(f"{imagename}").convert('L')
     img = thresh(img)
 
-    left = htrim
-    top = vtrim
-    right = img.width - htrim
-    bottom = img.height - vtrim
-    
-    width = right - left
-    height = bottom - top
+    left = (uncrop_width - width)//2
+    right = width + left
+    top = (uncrop_height - height)//2
+    bottom = height + top
 
+    
     if img.width > 2*width: # 2 page spread case
         img = img.crop((left, top, right + width, bottom))
-        if halve:
-            img = img.resize((width, height//2), Image.NEAREST)
     else:
         img = img.crop((left, top, right, bottom))
-        if halve:
-            img = img.resize((width//2, height//2), Image.NEAREST)
+    img.save(f"out/{imagename}")
 
-    if not os.path.exists(out):
-        os.makedirs(out)
-    img.save(os.path.join(out, imagename))
+if not os.path.exists(folder + "/out"):
+    os.makedirs(folder + "/out")
 
-for f in os.listdir():
-    # .kra~ are backup files
-    if '.kra' not in f or '.kra~' in f:
+os.chdir(folder)
+
+def getNum(filename):
+    return int(filename.split('pg')[1].split('.')[0])
+
+for f in os.listdir(folder):
+    if "pg" not in f or '.kra' not in f  or '~' in f:
         continue
-
-    process(kra2png(f), args.htrim, args.vtrim, out=args.out, halve=args.halve)
+    if args and getNum(f) not in args:
+        continue
+    process(kra2png(f))
